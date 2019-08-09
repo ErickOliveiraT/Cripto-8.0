@@ -47,7 +47,7 @@ class rotor():
 def create_data_block(ent, r1, r2, r3):
 	out = ''
 	pattern = []
-	special = string.punctuation + ' '
+	special = string.punctuation + ' ' + '0123456789'
 	for char in ent:
 		flag_r1 = False
 		flag_r2 = False
@@ -82,7 +82,7 @@ def create_data_block(ent, r1, r2, r3):
 def encode(ent, r1, r2, r3):
 	out = ''
 	ent = ent.lower()
-	special = string.punctuation + ' '
+	special = string.punctuation + ' ' + '0123456789'
 	for char in ent:
 		if special.find(char) != -1:
 			out += char
@@ -103,7 +103,29 @@ def encode(ent, r1, r2, r3):
 					r3.reset_spins()
 	return out
 
+def filter_ent(ent):
+	special = string.punctuation + ' ' + '0123456789'
+	ent = ent[::-1]
+	store = ''
+	new_ent = ''
+	for i in range(0,len(ent)):
+		if special.find(ent[i]) != -1:
+			store += ent[i]
+		else:
+			for j in range(i,len(ent)):
+				new_ent += ent[j]
+			break
+	return [new_ent[::-1], store]
+
 def decode(ent, r1, r2, r3):
+	complete = False
+	filter_data = filter_ent(ent)
+	ent = filter_data[0]
+	if filter_data[1] != '':
+		complete = True
+		stored = filter_data[1]
+
+	special = string.punctuation + ' ' + '0123456789'
 	data_block = create_data_block(ent, r1, r2, r3)
 	r1.showing = data_block[0]
 	r2.showing = data_block[1]
@@ -112,8 +134,7 @@ def decode(ent, r1, r2, r3):
 	r2.build_sequence()
 	r3.build_sequence()
 	pattern = data_block[3]
-	counter = len(pattern)-1
-	special = string.punctuation + ' '
+	counter = len(pattern)-1	
 	ent = ent[::-1]
 	pattern.reverse()
 	plain = ''
@@ -133,4 +154,6 @@ def decode(ent, r1, r2, r3):
 		if pattern[counter][2] == 3:
 			r3.rotate(True)
 		counter -= 1
+	if complete:
+		return plain[::-1]+stored
 	return plain[::-1]
