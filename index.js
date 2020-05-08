@@ -5,7 +5,7 @@ let r1 = new Rotor(5,'p');
 let r2 = new Rotor(4,'o');
 let r3 = new Rotor(1,'s');
 
-let ent = 'Nem adianta discutir. Todos sabem que o meu peido fede muito mais que seu!!';
+let ent = 'Lorem ipsum';
 
 let enc = cripto8.encode(ent,r1,r2,r3);
 console.log(enc);
